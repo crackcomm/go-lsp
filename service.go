@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/json"
+	"fmt"
 	"strings"
 )
 
@@ -893,24 +894,31 @@ func (v SemanticHighlightingTokens) Serialize() []byte {
 }
 
 func DeserializeSemanticHighlightingTokens(src []byte) (SemanticHighlightingTokens, error) {
-	dst := make([]byte, base64.StdEncoding.DecodedLen(len(src)))
-	n, err := base64.StdEncoding.Decode(dst, src)
+	decodedLen := base64.StdEncoding.DecodedLen(len(src))
+	decoded := make([]byte, decodedLen)
+	n, err := base64.StdEncoding.Decode(decoded, src)
 	if err != nil {
 		return nil, err
 	}
+	decoded = decoded[:n]
 
-	var chunks [][]byte
-	for i := 7; i < len(dst[:n]); i += 8 {
-		chunks = append(chunks, dst[i-7:i+1])
+	if len(decoded) == 0 {
+		return nil, nil // Return nil if decoded data is empty
 	}
 
-	var tokens SemanticHighlightingTokens
-	for _, chunk := range chunks {
-		tokens = append(tokens, SemanticHighlightingToken{
-			Character: binary.BigEndian.Uint32(chunk[:4]),
+	if len(decoded)%8 != 0 {
+		return nil, fmt.Errorf("decoded semantic highlighting tokens has length %d, which is not a multiple of 8", len(decoded))
+	}
+
+	tokens := make(SemanticHighlightingTokens, len(decoded)/8)
+	for i := range tokens {
+		offset := i * 8
+		chunk := decoded[offset : offset+8]
+		tokens[i] = SemanticHighlightingToken{
+			Character: binary.BigEndian.Uint32(chunk[0:4]),
 			Length:    binary.BigEndian.Uint16(chunk[4:6]),
-			Scope:     binary.BigEndian.Uint16(chunk[6:]),
-		})
+			Scope:     binary.BigEndian.Uint16(chunk[6:8]),
+		}
 	}
 
 	return tokens, nil

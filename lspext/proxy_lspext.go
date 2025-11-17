@@ -2,15 +2,14 @@
 //
 // An overview of the different protocol variants:
 //
-// 	// vanilla LSP
-// 	github.com/sourcegraph/go-langserver/pkg/lsp
+//	// vanilla LSP
+//	github.com/sourcegraph/go-langserver/pkg/lsp
 //
-// 	// proxy (http gateway) server LSP extensions
-// 	github.com/sourcegraph/sourcegraph/xlang
+//	// proxy (http gateway) server LSP extensions
+//	github.com/sourcegraph/sourcegraph/xlang
 //
-// 	// (this package) build/lang server LSP extensions
-// 	github.com/sourcegraph/sourcegraph/xlang/lspx
-//
+//	// (this package) build/lang server LSP extensions
+//	github.com/sourcegraph/sourcegraph/xlang/lspx
 package lspext
 
 import (
