@@ -17,9 +17,9 @@ type InitializeParams struct {
 	RootPath string `json:"rootPath,omitempty"`
 
 	RootURI               DocumentURI        `json:"rootUri,omitempty"`
-	ClientInfo            ClientInfo         `json:"clientInfo,omitempty"`
+	ClientInfo            ClientInfo         `json:"clientInfo"`
 	Trace                 Trace              `json:"trace,omitempty"`
-	InitializationOptions interface{}        `json:"initializationOptions,omitempty"`
+	InitializationOptions any                `json:"initializationOptions,omitempty"`
 	Capabilities          ClientCapabilities `json:"capabilities"`
 
 	WorkDoneToken string `json:"workDoneToken,omitempty"`
@@ -46,10 +46,10 @@ type ClientInfo struct {
 type Trace string
 
 type ClientCapabilities struct {
-	Workspace    WorkspaceClientCapabilities    `json:"workspace,omitempty"`
-	TextDocument TextDocumentClientCapabilities `json:"textDocument,omitempty"`
-	Window       WindowClientCapabilities       `json:"window,omitempty"`
-	Experimental interface{}                    `json:"experimental,omitempty"`
+	Workspace    WorkspaceClientCapabilities    `json:"workspace"`
+	TextDocument TextDocumentClientCapabilities `json:"textDocument"`
+	Window       WindowClientCapabilities       `json:"window"`
+	Experimental any                            `json:"experimental,omitempty"`
 
 	// Below are Sourcegraph extensions. They do not live in lspext since
 	// they are extending the field InitializeParams.Capabilities
@@ -71,15 +71,15 @@ type WorkspaceClientCapabilities struct {
 	WorkspaceEdit struct {
 		DocumentChanges    bool     `json:"documentChanges,omitempty"`
 		ResourceOperations []string `json:"resourceOperations,omitempty"`
-	} `json:"workspaceEdit,omitempty"`
+	} `json:"workspaceEdit"`
 
 	ApplyEdit bool `json:"applyEdit,omitempty"`
 
 	Symbol struct {
 		SymbolKind struct {
 			ValueSet []int `json:"valueSet,omitempty"`
-		} `json:"symbolKind,omitEmpty"`
-	} `json:"symbol,omitempty"`
+		} `json:"symbolKind"`
+	} `json:"symbol"`
 
 	ExecuteCommand *struct {
 		DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
@@ -122,10 +122,10 @@ type TextDocumentClientCapabilities struct {
 	DocumentSymbol struct {
 		SymbolKind struct {
 			ValueSet []int `json:"valueSet,omitempty"`
-		} `json:"symbolKind,omitEmpty"`
+		} `json:"symbolKind"`
 
 		HierarchicalDocumentSymbolSupport bool `json:"hierarchicalDocumentSymbolSupport,omitempty"`
-	} `json:"documentSymbol,omitempty"`
+	} `json:"documentSymbol"`
 
 	Formatting *struct {
 		DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
@@ -153,29 +153,29 @@ type TextDocumentClientCapabilities struct {
 		CodeActionLiteralSupport struct {
 			CodeActionKind struct {
 				ValueSet []CodeActionKind `json:"valueSet,omitempty"`
-			} `json:"codeActionKind,omitempty"`
-		} `json:"codeActionLiteralSupport,omitempty"`
-	} `json:"codeAction,omitempty"`
+			} `json:"codeActionKind"`
+		} `json:"codeActionLiteralSupport"`
+	} `json:"codeAction"`
 
 	Completion struct {
 		CompletionItem struct {
 			DocumentationFormat []DocumentationFormat `json:"documentationFormat,omitempty"`
 			SnippetSupport      bool                  `json:"snippetSupport,omitempty"`
-		} `json:"completionItem,omitempty"`
+		} `json:"completionItem"`
 
 		CompletionItemKind struct {
 			ValueSet []CompletionItemKind `json:"valueSet,omitempty"`
-		} `json:"completionItemKind,omitempty"`
+		} `json:"completionItemKind"`
 
 		ContextSupport bool `json:"contextSupport,omitempty"`
-	} `json:"completion,omitempty"`
+	} `json:"completion"`
 
 	SignatureHelp *struct {
 		SignatureInformation struct {
 			ParameterInformation struct {
 				LabelOffsetSupport bool `json:"labelOffsetSupport,omitempty"`
-			} `json:"parameterInformation,omitempty"`
-		} `json:"signatureInformation,omitempty"`
+			} `json:"parameterInformation"`
+		} `json:"signatureInformation"`
 	} `json:"signatureHelp,omitempty"`
 
 	DocumentLink *struct {
@@ -191,7 +191,7 @@ type TextDocumentClientCapabilities struct {
 	FoldingRange *struct {
 		DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 
-		RangeLimit interface{} `json:"rangeLimit,omitempty"`
+		RangeLimit any `json:"rangeLimit,omitempty"`
 
 		LineFoldingOnly bool `json:"lineFoldingOnly,omitempty"`
 	} `json:"foldingRange,omitempty"`
@@ -210,7 +210,7 @@ type WindowClientCapabilities struct {
 }
 
 type InitializeResult struct {
-	Capabilities ServerCapabilities `json:"capabilities,omitempty"`
+	Capabilities ServerCapabilities `json:"capabilities"`
 }
 
 type InitializeError struct {
@@ -329,7 +329,7 @@ type ServerCapabilities struct {
 	// is a Sourcegraph extension.
 	XWorkspaceSymbolByProperties bool `json:"xworkspaceSymbolByProperties,omitempty"`
 
-	Experimental interface{} `json:"experimental,omitempty"`
+	Experimental any `json:"experimental,omitempty"`
 }
 
 type CompletionOptions struct {
@@ -366,32 +366,32 @@ type SemanticHighlightingOptions struct {
 type CompletionItemKind int
 
 const (
-	_ CompletionItemKind = iota
-	CIKText
-	CIKMethod
-	CIKFunction
-	CIKConstructor
-	CIKField
-	CIKVariable
-	CIKClass
-	CIKInterface
-	CIKModule
-	CIKProperty
-	CIKUnit
-	CIKValue
-	CIKEnum
-	CIKKeyword
-	CIKSnippet
-	CIKColor
-	CIKFile
-	CIKReference
-	CIKFolder
-	CIKEnumMember
-	CIKConstant
-	CIKStruct
-	CIKEvent
-	CIKOperator
-	CIKTypeParameter
+	_                CompletionItemKind = iota
+	CIKText          CompletionItemKind = iota
+	CIKMethod        CompletionItemKind = iota
+	CIKFunction      CompletionItemKind = iota
+	CIKConstructor   CompletionItemKind = iota
+	CIKField         CompletionItemKind = iota
+	CIKVariable      CompletionItemKind = iota
+	CIKClass         CompletionItemKind = iota
+	CIKInterface     CompletionItemKind = iota
+	CIKModule        CompletionItemKind = iota
+	CIKProperty      CompletionItemKind = iota
+	CIKUnit          CompletionItemKind = iota
+	CIKValue         CompletionItemKind = iota
+	CIKEnum          CompletionItemKind = iota
+	CIKKeyword       CompletionItemKind = iota
+	CIKSnippet       CompletionItemKind = iota
+	CIKColor         CompletionItemKind = iota
+	CIKFile          CompletionItemKind = iota
+	CIKReference     CompletionItemKind = iota
+	CIKFolder        CompletionItemKind = iota
+	CIKEnumMember    CompletionItemKind = iota
+	CIKConstant      CompletionItemKind = iota
+	CIKStruct        CompletionItemKind = iota
+	CIKEvent         CompletionItemKind = iota
+	CIKOperator      CompletionItemKind = iota
+	CIKTypeParameter CompletionItemKind = iota
 )
 
 func (c CompletionItemKind) String() string {
@@ -448,7 +448,7 @@ type CompletionTriggerKind int
 
 const (
 	CTKInvoked          CompletionTriggerKind = 1
-	CTKTriggerCharacter                       = 2
+	CTKTriggerCharacter CompletionTriggerKind = 2
 )
 
 type DocumentationFormat string
@@ -474,7 +474,7 @@ type InsertTextFormat int
 
 const (
 	ITFPlainText InsertTextFormat = 1
-	ITFSnippet                    = 2
+	ITFSnippet   InsertTextFormat = 2
 )
 
 type CompletionContext struct {
@@ -484,7 +484,7 @@ type CompletionContext struct {
 
 type CompletionParams struct {
 	TextDocumentPositionParams
-	Context CompletionContext `json:"context,omitempty"`
+	Context CompletionContext `json:"context"`
 }
 
 type Hover struct {
@@ -575,8 +575,8 @@ type DocumentHighlightKind int
 
 const (
 	Text  DocumentHighlightKind = 1
-	Read                        = 2
-	Write                       = 3
+	Read  DocumentHighlightKind = 2
+	Write DocumentHighlightKind = 3
 )
 
 type DocumentHighlight struct {
@@ -674,7 +674,7 @@ type ConfigurationItem struct {
 	Section  string `json:"section,omitempty"`
 }
 
-type ConfigurationResult []interface{}
+type ConfigurationResult []any
 
 type CodeActionContext struct {
 	Diagnostics []Diagnostic `json:"diagnostics"`
@@ -723,8 +723,8 @@ type DidChangeTextDocumentParams struct {
 }
 
 type TextDocumentContentChangeEvent struct {
-	Range       *Range `json:"range,omitEmpty"`
-	RangeLength uint   `json:"rangeLength,omitEmpty"`
+	Range       *Range `json:"range,omitempty"`
+	RangeLength uint   `json:"rangeLength,omitempty"`
 	Text        string `json:"text"`
 }
 
@@ -740,9 +740,9 @@ type MessageType int
 
 const (
 	MTError   MessageType = 1
-	MTWarning             = 2
-	Info                  = 3
-	Log                   = 4
+	MTWarning MessageType = 2
+	Info      MessageType = 3
+	Log       MessageType = 4
 )
 
 type ShowMessageParams struct {
@@ -773,8 +773,8 @@ type FileChangeType int
 
 const (
 	Created FileChangeType = 1
-	Changed                = 2
-	Deleted                = 3
+	Changed FileChangeType = 2
+	Deleted FileChangeType = 3
 )
 
 type FileEvent struct {
