@@ -355,8 +355,9 @@ type ExecuteCommandOptions struct {
 }
 
 type ExecuteCommandParams struct {
-	Command   string        `json:"command"`
-	Arguments []interface{} `json:"arguments,omitempty"`
+	Command       string            `json:"command"`
+	Arguments     []json.RawMessage `json:"arguments,omitempty"`
+	WorkDoneToken string            `json:"workDoneToken"`
 }
 
 type SemanticHighlightingOptions struct {
@@ -435,8 +436,10 @@ type CompletionItem struct {
 	FilterText       string             `json:"filterText,omitempty"`
 	InsertText       string             `json:"insertText,omitempty"`
 	InsertTextFormat InsertTextFormat   `json:"insertTextFormat,omitempty"`
+	InsertTextMode   InsertTextMode     `json:"insertTextMode,omitempty"`
 	TextEdit         *TextEdit          `json:"textEdit,omitempty"`
-	Data             interface{}        `json:"data,omitempty"`
+	Data             any                `json:"data,omitempty"`
+	Preselect        bool               `json:"preselect,omitempty"`
 }
 
 type CompletionList struct {
@@ -475,6 +478,13 @@ type InsertTextFormat int
 const (
 	ITFPlainText InsertTextFormat = 1
 	ITFSnippet   InsertTextFormat = 2
+)
+
+type InsertTextMode int
+
+const (
+	ITMAsIs              InsertTextMode = 1
+	ITMAdjustIndentation InsertTextMode = 2
 )
 
 type CompletionContext struct {
@@ -678,6 +688,7 @@ type ConfigurationResult []any
 
 type CodeActionContext struct {
 	Diagnostics []Diagnostic `json:"diagnostics"`
+	Only        []string     `json:"only,omitempty"`
 }
 
 type CodeActionParams struct {
@@ -691,9 +702,9 @@ type CodeLensParams struct {
 }
 
 type CodeLens struct {
-	Range   Range       `json:"range"`
-	Command Command     `json:"command,omitempty"`
-	Data    interface{} `json:"data,omitempty"`
+	Range   Range   `json:"range"`
+	Command Command `json:"command"`
+	Data    any     `json:"data,omitempty"`
 }
 
 type DocumentFormattingParams struct {
@@ -765,8 +776,8 @@ type LogMessageParams struct {
 	Message string      `json:"message"`
 }
 
-type DidChangeConfigurationParams struct {
-	Settings interface{} `json:"settings"`
+type DidChangeConfigurationParams[T any] struct {
+	Settings T `json:"settings"`
 }
 
 type FileChangeType int
@@ -916,4 +927,50 @@ type SemanticHighlightingToken struct {
 	Character uint32
 	Length    uint16
 	Scope     uint16
+}
+
+type InlayHintKind int
+
+const (
+	InlayHintKind_None      = 0
+	InlayHintKind_Type      = 1
+	InlayHintKind_Parameter = 2
+)
+
+type InlayHintParams struct {
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	Range        Range                  `json:"range"`
+}
+
+type InlayHint struct {
+	Position     Position      `json:"position"`
+	Label        string        `json:"label"`
+	Kind         InlayHintKind `json:"kind,omitempty"`
+	Tooltip      string        `json:"tooltip,omitempty"`
+	PaddingLeft  bool          `json:"paddingLeft,omitempty"`
+	PaddingRight bool          `json:"paddingRight,omitempty"`
+}
+
+type ApplyWorkspaceEditParams struct {
+	Edit WorkspaceEdit `json:"edit"`
+}
+
+type ProgressParams[T any] struct {
+	Token string `json:"token"`
+	Value T      `json:"value"`
+}
+
+type WorkDoneProgressBegin struct {
+	Title   string `json:"title"`
+	Kind    string `json:"kind"`
+	Message string `json:"message"`
+}
+
+type WorkDoneProgressEnd struct {
+	Kind    string `json:"kind"`
+	Message string `json:"message"`
+}
+
+type WorkDoneProgressCreateParams struct {
+	Token string `json:"token"`
 }
