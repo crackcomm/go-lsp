@@ -875,23 +875,16 @@ func (v *SemanticHighlightingInformation) UnmarshalJSON(data []byte) error {
 type SemanticHighlightingTokens []SemanticHighlightingToken
 
 func (v SemanticHighlightingTokens) Serialize() []byte {
-	var chunks [][]byte
-
 	// Writes each token to `tokens` in the byte format specified by the LSP
 	// proposal. Described below:
 	// |<---- 4 bytes ---->|<-- 2 bytes -->|<--- 2 bytes -->|
 	// |    character      |  length       |    index       |
-	for _, token := range v {
-		chunk := make([]byte, 8)
-		binary.BigEndian.PutUint32(chunk[:4], token.Character)
-		binary.BigEndian.PutUint16(chunk[4:6], token.Length)
-		binary.BigEndian.PutUint16(chunk[6:], token.Scope)
-		chunks = append(chunks, chunk)
-	}
-
-	src := make([]byte, len(chunks)*8)
-	for i, chunk := range chunks {
-		copy(src[i*8:i*8+8], chunk)
+	src := make([]byte, len(v)*8)
+	for i, token := range v {
+		offset := i * 8
+		binary.BigEndian.PutUint32(src[offset:offset+4], token.Character)
+		binary.BigEndian.PutUint16(src[offset+4:offset+6], token.Length)
+		binary.BigEndian.PutUint16(src[offset+6:offset+8], token.Scope)
 	}
 
 	dst := make([]byte, base64.StdEncoding.EncodedLen(len(src)))
