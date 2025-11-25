@@ -296,6 +296,20 @@ type SaveOptions struct {
 	IncludeText bool `json:"includeText"`
 }
 
+type WorkDoneProgressOptions struct {
+	WorkDoneProgress bool `json:"workDoneProgress,omitempty"`
+}
+
+type CodeActionOptions struct {
+	WorkDoneProgressOptions
+	CodeActionKinds []CodeActionKind `json:"codeActionKinds,omitempty"`
+}
+
+type RenameOptions struct {
+	WorkDoneProgressOptions
+	PrepareProvider bool `json:"prepareProvider,omitempty"`
+}
+
 type ServerCapabilities struct {
 	TextDocumentSync                 *TextDocumentSyncOptionsOrKind   `json:"textDocumentSync,omitempty"`
 	HoverProvider                    bool                             `json:"hoverProvider,omitempty"`
@@ -308,12 +322,12 @@ type ServerCapabilities struct {
 	DocumentSymbolProvider           bool                             `json:"documentSymbolProvider,omitempty"`
 	WorkspaceSymbolProvider          bool                             `json:"workspaceSymbolProvider,omitempty"`
 	ImplementationProvider           bool                             `json:"implementationProvider,omitempty"`
-	CodeActionProvider               bool                             `json:"codeActionProvider,omitempty"`
+	CodeActionProvider               any                              `json:"codeActionProvider,omitempty"`
 	CodeLensProvider                 *CodeLensOptions                 `json:"codeLensProvider,omitempty"`
 	DocumentFormattingProvider       bool                             `json:"documentFormattingProvider,omitempty"`
 	DocumentRangeFormattingProvider  bool                             `json:"documentRangeFormattingProvider,omitempty"`
 	DocumentOnTypeFormattingProvider *DocumentOnTypeFormattingOptions `json:"documentOnTypeFormattingProvider,omitempty"`
-	RenameProvider                   bool                             `json:"renameProvider,omitempty"`
+	RenameProvider                   any                              `json:"renameProvider,omitempty"`
 	ExecuteCommandProvider           *ExecuteCommandOptions           `json:"executeCommandProvider,omitempty"`
 	SemanticHighlighting             *SemanticHighlightingOptions     `json:"semanticHighlighting,omitempty"`
 
@@ -498,21 +512,9 @@ type CompletionParams struct {
 	Context CompletionContext `json:"context"`
 }
 
-type Hover struct {
-	Contents []MarkedString `json:"contents"`
-	Range    *Range         `json:"range,omitempty"`
-}
-
-type hover Hover
-
-func (h Hover) MarshalJSON() ([]byte, error) {
-	if h.Contents == nil {
-		return json.Marshal(hover{
-			Contents: []MarkedString{},
-			Range:    h.Range,
-		})
-	}
-	return json.Marshal(hover(h))
+type Hover[T any] struct {
+	Contents T      `json:"contents"`
+	Range    *Range `json:"range,omitempty"`
 }
 
 type MarkedString markedString
@@ -957,8 +959,8 @@ type ApplyWorkspaceEditParams struct {
 }
 
 type ProgressParams[T any] struct {
-	Token string `json:"token"`
-	Value T      `json:"value"`
+	Token any `json:"token"`
+	Value T   `json:"value"`
 }
 
 type WorkDoneProgressBegin struct {

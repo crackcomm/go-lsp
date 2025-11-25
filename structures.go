@@ -166,3 +166,8 @@ type TextDocumentPositionParams struct {
 	 */
 	Position Position `json:"position"`
 }
+
+type MarkupContent struct {
+	Kind  string `json:"kind"`
+	Value string `json:"value"`
+}

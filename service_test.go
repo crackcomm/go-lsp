@@ -98,21 +98,21 @@ func TestMarkedString_MarshalUnmarshalJSON(t *testing.T) {
 func TestHover(t *testing.T) {
 	tests := []struct {
 		data          []byte
-		want          Hover
+		want          Hover[[]MarkedString]
 		skipUnmarshal bool
 		skipMarshal   bool
 	}{{
 		data: []byte(`{"contents":[{"language":"go","value":"foo"}]}`),
-		want: Hover{Contents: []MarkedString{{Language: "go", Value: "foo", isRawString: false}}},
+		want: Hover[[]MarkedString]{Contents: []MarkedString{{Language: "go", Value: "foo", isRawString: false}}},
 	}, {
-		data:          []byte(`{"contents":[]}`),
-		want:          Hover{Contents: nil},
+		data:          []byte(`{"contents":null}`),
+		want:          Hover[[]MarkedString]{Contents: nil},
 		skipUnmarshal: true, // testing we don't marshal nil
 	}}
 
 	for _, test := range tests {
 		if !test.skipUnmarshal {
-			var h Hover
+			var h Hover[[]MarkedString]
 			if err := json.Unmarshal(test.data, &h); err != nil {
 				t.Errorf("json.Unmarshal error: %s", err)
 				continue
